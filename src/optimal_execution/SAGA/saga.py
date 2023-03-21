@@ -9,6 +9,8 @@ import numpy as np
 
 from src.optimal_execution.CONSTANT.constant import AgentState
 
+import pdb 
+
 class SagaAgent(object):
     
     def __init__(self, s_0, x_0, q_0, nb_iter = 100, time_step = 0.01, 
@@ -39,6 +41,7 @@ class SagaAgent(object):
         
         self.state = None
         self.next_state = None
+        self.q_indeces = np.arange(self.size_q)
     
     def initialize_variables(self):
         # Initialize state and next state
@@ -57,7 +60,8 @@ class SagaAgent(object):
         # Forward loop
         for i in range(self.nb_iter):
             # get next state
-            self.next_state = self.getNextState(rnd_values[i], v_0_past[i+1,:])
+            self.next_state = self.getNextState(rnd_values[i], v_0_past[i+1,:],
+                                                nb_past[i+1,:])
 
             # find optimal adjustment
             delta = self.find_optimal_adjust(i, v_0)
@@ -90,15 +94,17 @@ class SagaAgent(object):
                    
         return v_0, v_0_past
     
-    def getNextState(self, rnd_val, v_0_past):
+    def getNextState(self, rnd_val, v_0_past, nb_past):
         s_next = self.state.s + self.alpha * self.mu * self.time_step + rnd_val
         x_next = self.state.x - self.kappa * (self.state.nu*self.state.nu) * self.time_step\
-                    - self.state.nu * self.state.s * self.time_step
+                - self.state.nu * self.state.s * self.time_step
         q_next = min(max(self.state.q + self.state.nu * self.time_step, self.q_min), self.q_max)
         idx_q = (self.state.q - self.q_min) / self.step_q
         idx_q = int(round(min(max(idx_q, 0), self.size_q-1)))
         
-        weights = np.exp(5 * np.abs(v_0_past)) + 1e-4
+        idx_past = np.minimum(np.maximum(nb_past, 0), self.n_max - 1)
+        v_0_past_tmp = v_0_past[self.q_indeces, idx_past]
+        weights = np.exp(5 * np.abs(v_0_past_tmp)) + 1e-4
         idx_q_next = np.random.choice(self.size_q, 1, p= weights/weights.sum())[0]
         nu_next = (self.q_min + idx_q_next * self.step_q - self.state.q) / self.time_step
         

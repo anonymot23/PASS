@@ -45,21 +45,21 @@ class VGeneratorSaga(object):
         
         # saga agent
         self.sagaAgent = SagaAgent(self.s_0, self.x_0, self.q_0,
-                                    self.nb_iter, self.time_step, 
-                                    self.size_q, self.q_max, self.mu,
-                                    self.alpha, self.var, self.kappa,
-                                    self.phi, self.n_max, self.prob_exp)
+                                   self.nb_iter, self.time_step, 
+                                   self.size_q, self.q_max, self.mu,
+                                   self.alpha, self.var, self.kappa,
+                                   self.phi, self.n_max, self.prob_exp)
         
         
     def initialize_parameters(self):
         # initialize primary parameters
         self.v_0 = np.ones((self.nb_iter + 1, self.size_q))
-        q_values = np.arange(self.passAgent.q_min, self.passAgent.q_max,
-                             self.passAgent.step_q)
+        q_values = np.arange(self.sagaAgent.q_min, self.sagaAgent.q_max,
+                             self.sagaAgent.step_q)
         self.v_0[-1,:] = - self.A * q_values * q_values
-        self.v_0_past = np.zeros((self.nb_iter + 1, self.size_q))
+        self.v_0_past = np.zeros((self.nb_iter + 1, self.size_q, self.n_max))
         self.nb_past = np.zeros((self.nb_iter + 1, self.size_q), dtype = int)
-        
+    
         # initialize tracking variables
         self.v_0_before = np.array(self.v_0)
         self.v_0_past_before = np.array(self.v_0_past)
@@ -82,10 +82,10 @@ class VGeneratorSaga(object):
         for ep in range(self.nb_episode):
             # Update mean, error
             gamma_inner = self.update_gamma_inner(ep)
-            self.v_0, self.v_0_past = self.passAgent.update(self.v_0, self.v_0_past,
+            self.v_0, self.v_0_past = self.sagaAgent.update(self.v_0, self.v_0_past,
                                                             self.nb_past,
                                                             gamma= gamma_inner)
-            error_val = self.passAgent.getLoss(self.v_0, v_theo)
+            error_val = self.sagaAgent.getLoss(self.v_0, v_theo)
 
             # update tracking variables
             self.update_tracking_parameters(ep, error_val)
@@ -156,9 +156,8 @@ if __name__ == "__main__":
     T_max = 1
     mu = 1
     alpha = 0.1
-    alpha_min = 1
-    alpha_max = 3
-    r = 0.5
+    n_max = 1
+    prob_exp = 1
     var = 0.01
     kappa = 0.1
     phi = 1
@@ -173,9 +172,9 @@ if __name__ == "__main__":
     v_theo = cjTheo.get_v()
     
     # Generate forecast
-    vGen = VGeneratorPass(s_0, x_0, q_0, nb_iter, nb_episode, window_size,
-                              time_step, size_q, q_max, mu, alpha,
-                              alpha_min, alpha_max, r, var, kappa, phi,
-                              A, gamma, print_metrics, pctg_min)
+    vGen = VGeneratorSaga(s_0, x_0, q_0, nb_iter, nb_episode, window_size,
+                          time_step, size_q, q_max, mu, alpha,
+                          var, kappa, phi, n_max, prob_exp,
+                          A, gamma, print_metrics, pctg_min)
     vGen.get_v(v_theo)
     
