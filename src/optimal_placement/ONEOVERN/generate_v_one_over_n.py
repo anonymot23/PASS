@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 
-from src.optimal_placement.CONSTANT.constant import ConstantAgent
+from src.optimal_placement.CONSTANT.constant import ConstantAgent, BookState
 
 class VGeneratorOneOverN(object):
 
@@ -40,7 +35,7 @@ class VGeneratorOneOverN(object):
         self.print_metrics = print_metrics
         
         # constant agent
-        self.constAgent = ConstantAgent(self.q_0, self.pos_0, self.intensity_values,
+        self.agent = ConstantAgent(self.q_0, self.pos_0, self.intensity_values,
                                        self.gain, self.cost_out, self.cost_stay,
                                        self.nb_iter, self.size_q, self.q_max,
                                        self.eta, self.write_history)
@@ -48,7 +43,7 @@ class VGeneratorOneOverN(object):
         
     def initialize_parameters(self):
         # initialize primary parameters
-        self.h_0 = np.ones((self.size_q, self.size_q + 1))
+        self.h_0 = 5*np.ones((self.size_q, self.size_q + 1))
         self.h_0_stay = np.ones((self.size_q, self.size_q + 1))
         self.h_0_mkt = np.ones((self.size_q, self.size_q + 1))
         # add final constraint
@@ -56,6 +51,8 @@ class VGeneratorOneOverN(object):
             self.h_0[q, q + 2 :] = np.nan
             self.h_0_stay[q, q + 2 :] = np.nan
             self.h_0_mkt[q, q + 2 :] = np.nan
+            self.h_0[q, 0] = self.get_reward(q, -1)# market
+            self.h_0[q, 1] = self.get_reward(q, 0)# execution
         self.h_0_past = np.zeros((self.size_q, self.size_q + 1, 3))
         
         # initialize tracking variables
@@ -82,10 +79,10 @@ class VGeneratorOneOverN(object):
         for ep in range(self.nb_episode):
             # Update h_0
             gamma_inner = self.update_gamma_inner(ep)
-            self.h_0_mkt, self.h_0_stay, self.h_0, self.h_0_past  = self.constAgent.update(self.h_0_mkt, self.h_0_stay,
+            self.h_0_mkt, self.h_0_stay, self.h_0, self.h_0_past  = self.agent.update(self.h_0_mkt, self.h_0_stay,
                                                             self.h_0, self.h_0_past,
                                                             gamma= gamma_inner)
-            error_val = self.constAgent.getLoss(self.h_0, h_theo)
+            error_val = self.agent.getLoss(self.h_0, h_theo)
 
             # update tracking variables
             self.update_tracking_parameters(ep, error_val)
@@ -137,6 +134,10 @@ class VGeneratorOneOverN(object):
             self.cnt_period += 1
             self.cnt_reset += 1
     
+    def get_reward(self, q, pos):
+        state = BookState(q, pos)
+        return self.agent.get_reward(state)
+    
     def print_summary(self, ep):
         if self.print_metrics:
             if ((ep % self.window_size)==0 and (ep> 0)):
@@ -145,31 +146,21 @@ class VGeneratorOneOverN(object):
 if __name__ == "__main__":
     from os.path import join
     import pandas as pd
-    import src.optimal_placement.rLAlgorithms.solTheo as sol_theo
+    from src.utils.optimal_placement_num_sol import NumSol
+    from src.optimal_placement.parameters import DATA_FOLDER, INTENSITY_FILENAME
     
-    def reward_exec(qsame, bb_pos, gain = 2, cost_out = -1, cost_stay = -0.5):
-        if bb_pos ==  0: ## win if execution
-            return gain
-        elif bb_pos ==  -1: ## cost of a market order
-            return cost_out
-        else : ## cost of waiting
-            return cost_stay
-    
-    path = "..\..\..\data"
-    filename = "Intens_val_qr.csv"
-    Intens_val = pd.read_csv(join(path,filename), index_col = 0)
+    Intens_val = pd.read_csv(join(DATA_FOLDER, INTENSITY_FILENAME), index_col = 0)
     Intens_val_bis = Intens_val[Intens_val['Spread'] == 1].groupby(['BB size']).agg({'Limit':'mean', 'Cancel': 'mean', 'Market': 'mean'}).loc[:10,:]
     Intens_val_bis.reset_index(inplace = True)
     Intens_val_bis.loc[0,['Cancel','Market']] = 0
     
     # Initialization parameters      
-    q_0 = 5
-    pos_0 = 0
-    intensity_values = Intens_val_bis
-    q_0 = 1 
-    gain = 2
-    cost_out = -1
-    cost_stay = -0.5,
+    q_0 = 2
+    pos_0 = 1
+    intensity_values = Intens_val_bis 
+    gain = 6
+    cost_out = -0.6
+    cost_stay = -0.2
     nb_iter= 100
     nb_episode = int(100)
     window_size = 50
@@ -185,10 +176,11 @@ if __name__ == "__main__":
     tol = 0.1
     size_q = Intens_val_bis.shape[0]
     nb_iter_scheme = 400
-    reward_exec_1 = lambda qsame, bb_pos: reward_exec(qsame, bb_pos, gain = 6, cost_out = -0.6, cost_stay = -0.2)
-    df_bis = sol_theo.Sol_num_scheme(nb_iter_scheme,size_q,Intens_val_bis,tol = tol,reward_exec_1 = reward_exec_1)
-    h_theo = sol_theo.Read_h_0_theo(df_bis["Value_opt"].values, size_q, reward_exec_1)
-
+    num_sol = NumSol(intensity_values, nb_iter_scheme, \
+                 size_q, tol, gain = 6, cost_out = -0.6, cost_stay = -0.2)
+    df_bis = num_sol.get_v()
+    h_theo = num_sol.reformat_sol(df_bis["Value_opt"].values)
+    
     
     # Generate forecast
     vGen = VGeneratorOneOverN(q_0, pos_0, intensity_values,
@@ -198,4 +190,3 @@ if __name__ == "__main__":
                               gamma, write_history, print_metrics,
                               pctg_min)
     vGen.get_v(h_theo)
-    

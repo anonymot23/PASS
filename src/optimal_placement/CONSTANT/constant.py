@@ -58,13 +58,13 @@ class ConstantAgent(object):
         # Forward loop
         for i in range(self.nb_iter):
             # get next market event
-            idx_event = self.getNextEvent()
+            idx_event = self.getNextEvent()# *** 
             
             # get next state
-            self.next_state, reward = self.getNext(idx_event)
+            self.next_state, reward = self.getNext(idx_event)# ***
 
             # find optimal adjustment
-            delta_mkt, delta_stay, delta = self.find_adjusts(h_0_stay, h_0_mkt, h_0, reward)
+            delta_mkt, delta_stay, delta = self.find_adjusts(h_0_stay, h_0_mkt, h_0, reward) # ***
             
             # update h_0s
             h_0[self.state.q, self.state.pos + 1] += gamma * delta
@@ -134,7 +134,7 @@ class ConstantAgent(object):
                    
         return next_state, reward  
         
-    def get_reward(self, state):
+    def get_reward(self, state):# **
         # win when executed
         if state.pos ==  0: 
             return self.gain
@@ -147,13 +147,13 @@ class ConstantAgent(object):
         
     def find_adjusts(self, h_0_stay, h_0_mkt, h_0, reward):
         # adjustment market 
-        delta_mkt = self.find_adjust_market(h_0_mkt)
+        delta_mkt = self.find_adjust_market(h_0_mkt)#**
         
         # adjustment stay 
-        delta_stay = self.find_adjust_stay(h_0_stay, reward)
+        delta_stay = self.find_adjust_stay(h_0_stay, reward)# **
         
         # optimal adjustment
-        delta = self.find_opti_adjust(h_0, reward)
+        delta = self.find_opti_adjust(h_0, reward)# **
         
         return delta_mkt, delta_stay, delta
 
@@ -171,7 +171,7 @@ class ConstantAgent(object):
         # reward market order
         if (self.next_state.pos >= 1): 
             q_after_mkt =  max(self.next_state.q - 1, 0)
-            pos_after_mkt = self.next_state.pos - 1
+            pos_after_mkt = -1
             state_after_market = BookState(q_after_mkt, pos_after_mkt)
             reward_mkt = self.get_reward(state_after_market)
         else:
@@ -190,7 +190,7 @@ class ConstantAgent(object):
         # reward market order
         if (self.next_state.pos >= 1): 
             q_after_mkt =  max(self.next_state.q - 1, 0)
-            pos_after_mkt = self.next_state.pos - 1
+            pos_after_mkt = - 1
             state_after_market = BookState(q_after_mkt, pos_after_mkt)
             reward_mkt = self.get_reward(state_after_market)
         else:

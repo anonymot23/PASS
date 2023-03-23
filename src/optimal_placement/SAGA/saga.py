@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 import pandas as pd
@@ -175,7 +170,7 @@ class SagaAgent(object):
         # reward market order
         if (self.next_state.pos >= 1): 
             q_after_mkt =  max(self.next_state.q - 1, 0)
-            pos_after_mkt = self.next_state.pos - 1
+            pos_after_mkt = -1
             state_after_market = BookState(q_after_mkt, pos_after_mkt)
             reward_mkt = self.get_reward(state_after_market)
         else:
@@ -194,7 +189,7 @@ class SagaAgent(object):
         # reward market order
         if (self.next_state.pos >= 1): 
             q_after_mkt =  max(self.next_state.q - 1, 0)
-            pos_after_mkt = self.next_state.pos - 1
+            pos_after_mkt = - 1
             state_after_market = BookState(q_after_mkt, pos_after_mkt)
             reward_mkt = self.get_reward(state_after_market)
         else:
@@ -203,7 +198,7 @@ class SagaAgent(object):
         delta = max(reward_mkt, reward + self.eta * h_stay) \
                 - h_0[self.state.q, self.state.pos + 1]
         return delta
-
+    
     def update_h(self, h_0, h_0_past, nb_past, delta, idx, gamma): 
         j = nb_past[self.state.q, self.state.pos + 1]
         if j == 0:
@@ -236,7 +231,7 @@ class SagaAgent(object):
         return new_state
         
     def getLoss(self, v, v_theo):
-        return np.linalg.norm(v - v_theo)
+        return np.linalg.norm(np.nan_to_num(v) - np.nan_to_num(v_theo))
 
     def print_summary(self, i, idx_event):
         if self.write_history:

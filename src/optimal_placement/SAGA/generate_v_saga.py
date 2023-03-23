@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 
 from src.optimal_placement.SAGA.saga import SagaAgent
+from src.optimal_placement.CONSTANT.constant import BookState
 
 class VGeneratorSaga(object):
 
@@ -52,7 +48,7 @@ class VGeneratorSaga(object):
         
     def initialize_parameters(self):
         # initialize primary parameters
-        self.h_0 = np.ones((self.size_q, self.size_q + 1))
+        self.h_0 = 5*np.ones((self.size_q, self.size_q + 1))
         self.h_0_stay = np.ones((self.size_q, self.size_q + 1))
         self.h_0_mkt = np.ones((self.size_q, self.size_q + 1))
         # add final constraint
@@ -60,6 +56,8 @@ class VGeneratorSaga(object):
             self.h_0[q, q + 2 :] = np.nan
             self.h_0_stay[q, q + 2 :] = np.nan
             self.h_0_mkt[q, q + 2 :] = np.nan
+            self.h_0[q, 0] = self.get_reward(q, -1)# market
+            self.h_0[q, 1] = self.get_reward(q, 0)# execution
         self.h_0_past = np.zeros((self.size_q, self.size_q + 1, 3,\
                                   self.n_max))
         self.nb_past = np.zeros((self.size_q, self.size_q + 1),\
@@ -140,6 +138,10 @@ class VGeneratorSaga(object):
             self.cnt_window = 0
             self.cnt_period += 1
             self.cnt_reset += 1
+
+    def get_reward(self, q, pos):
+        state = BookState(q, pos)
+        return self.agent.get_reward(state)
     
     def print_summary(self, ep):
         if self.print_metrics:
@@ -149,33 +151,23 @@ class VGeneratorSaga(object):
 if __name__ == "__main__":
     from os.path import join
     import pandas as pd
-    import src.optimal_placement.rLAlgorithms.solTheo as sol_theo
+    from src.utils.optimal_placement_num_sol import NumSol
+    from src.optimal_placement.parameters import DATA_FOLDER, INTENSITY_FILENAME
     
-    def reward_exec(qsame, bb_pos, gain = 2, cost_out = -1, cost_stay = -0.5):
-        if bb_pos ==  0: ## win if execution
-            return gain
-        elif bb_pos ==  -1: ## cost of a market order
-            return cost_out
-        else : ## cost of waiting
-            return cost_stay
-    
-    path = "..\..\..\data"
-    filename = "Intens_val_qr.csv"
-    Intens_val = pd.read_csv(join(path,filename), index_col = 0)
+    Intens_val = pd.read_csv(join(DATA_FOLDER, INTENSITY_FILENAME), index_col = 0)
     Intens_val_bis = Intens_val[Intens_val['Spread'] == 1].groupby(['BB size']).agg({'Limit':'mean', 'Cancel': 'mean', 'Market': 'mean'}).loc[:10,:]
     Intens_val_bis.reset_index(inplace = True)
     Intens_val_bis.loc[0,['Cancel','Market']] = 0
     
     # Initialization parameters      
-    q_0 = 5
-    pos_0 = 0
+    q_0 = 2
+    pos_0 = 1
     intensity_values = Intens_val_bis
-    q_0 = 1 
-    gain = 2
-    cost_out = -1
-    cost_stay = -0.5,
+    gain = 6
+    cost_out = -0.6
+    cost_stay = -0.2
     n_max = 1
-    prob_exp = 1, 
+    prob_exp = 1
     nb_iter= 100
     nb_episode = int(100)
     window_size = 50
@@ -191,10 +183,10 @@ if __name__ == "__main__":
     tol = 0.1
     size_q = Intens_val_bis.shape[0]
     nb_iter_scheme = 400
-    reward_exec_1 = lambda qsame, bb_pos: reward_exec(qsame, bb_pos, gain = 6, cost_out = -0.6, cost_stay = -0.2)
-    df_bis = sol_theo.Sol_num_scheme(nb_iter_scheme,size_q,Intens_val_bis,tol = tol,reward_exec_1 = reward_exec_1)
-    h_theo = sol_theo.Read_h_0_theo(df_bis["Value_opt"].values, size_q, reward_exec_1)
-
+    num_sol = NumSol(intensity_values, nb_iter_scheme, \
+                 size_q, tol, gain = 6, cost_out = -0.6, cost_stay = -0.2)
+    df_bis = num_sol.get_v()
+    h_theo = num_sol.reformat_sol(df_bis["Value_opt"].values)
     
     # Generate forecast
     vGen = VGeneratorSaga(q_0, pos_0, intensity_values,

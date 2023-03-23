@@ -2,7 +2,7 @@
 
 import numpy as np 
 
-from src.optimal_placement.CONSTANT.constant import ConstantAgent
+from src.optimal_placement.CONSTANT.constant import ConstantAgent, BookState
 
 class VGeneratorConstant(object):
 
@@ -43,7 +43,7 @@ class VGeneratorConstant(object):
         
     def initialize_parameters(self):
         # initialize primary parameters
-        self.h_0 = np.ones((self.size_q, self.size_q + 1))
+        self.h_0 = 5*np.ones((self.size_q, self.size_q + 1))
         self.h_0_stay = np.ones((self.size_q, self.size_q + 1))
         self.h_0_mkt = np.ones((self.size_q, self.size_q + 1))
         # add final constraint
@@ -51,6 +51,8 @@ class VGeneratorConstant(object):
             self.h_0[q, q + 2 :] = np.nan
             self.h_0_stay[q, q + 2 :] = np.nan
             self.h_0_mkt[q, q + 2 :] = np.nan
+            self.h_0[q, 0] = self.get_reward(q, -1)# market
+            self.h_0[q, 1] = self.get_reward(q, 0)# execution
         self.h_0_past = np.zeros((self.size_q, self.size_q + 1, 3))
         
         # initialize tracking variables
@@ -126,6 +128,10 @@ class VGeneratorConstant(object):
             self.cnt_window = 0
             self.cnt_period += 1
             self.cnt_reset += 1
+    
+    def get_reward(self, q, pos):
+        state = BookState(q, pos)
+        return self.agent.get_reward(state)
     
     def print_summary(self, ep):
         if self.print_metrics:

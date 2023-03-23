@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 import pandas as pd
@@ -144,7 +139,7 @@ class PassAgent(object):
                    
         return next_state, reward  
         
-    def get_reward(self, state):
+    def get_reward(self, state):# **
         # win when executed
         if state.pos ==  0: 
             return self.gain
@@ -181,7 +176,7 @@ class PassAgent(object):
         # reward market order
         if (self.next_state.pos >= 1): 
             q_after_mkt =  max(self.next_state.q - 1, 0)
-            pos_after_mkt = self.next_state.pos - 1
+            pos_after_mkt = -1
             state_after_market = BookState(q_after_mkt, pos_after_mkt)
             reward_mkt = self.get_reward(state_after_market)
         else:
@@ -189,7 +184,7 @@ class PassAgent(object):
         
         delta_mkt = reward_mkt - h_0_mkt[self.state.q, self.state.pos + 1]
         return delta_mkt
-    
+
     def find_opti_adjust(self, h_0, reward):
         # the value of stay decision
         if (self.next_state.pos <= 0):
@@ -200,7 +195,7 @@ class PassAgent(object):
         # reward market order
         if (self.next_state.pos >= 1): 
             q_after_mkt =  max(self.next_state.q - 1, 0)
-            pos_after_mkt = self.next_state.pos - 1
+            pos_after_mkt = - 1
             state_after_market = BookState(q_after_mkt, pos_after_mkt)
             reward_mkt = self.get_reward(state_after_market)
         else:
@@ -244,8 +239,6 @@ class PassAgent(object):
             h_0[self.state.q, self.state.pos + 1] += gamma * alpha * delta
         
         return h_0, alpha
-        
-
 
     def process_state(self, next_state):
         if (next_state.pos <= 0):
@@ -258,7 +251,7 @@ class PassAgent(object):
         return new_state
         
     def getLoss(self, v, v_theo):
-        return np.linalg.norm(v - v_theo)
+        return np.linalg.norm(np.nan_to_num(v) - np.nan_to_num(v_theo))
 
     def print_summary(self, i, idx_event):
         if self.write_history:
