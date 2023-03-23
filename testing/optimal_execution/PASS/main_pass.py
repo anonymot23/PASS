@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 18 18:36:51 2023
-
-@author: othma
-"""
 
 from src.optimal_execution.PASS.generate_v_pass import VGeneratorPass
 from src.utils.cj_theo_sol import CJTheoSol
@@ -73,6 +68,6 @@ def main_pass(params: dict = {}) -> None:
     return summary
 
 if __name__ == "__main__":
-    # simple test of functions 
+    # Test functions 
     params = DEFAULT_PARAMS_PASS
     res = main_pass(params)

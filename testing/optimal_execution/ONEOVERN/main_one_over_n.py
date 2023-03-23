@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 18 18:36:51 2023
-
-@author: othma
-"""
 
 from src.optimal_execution.ONEOVERN.generate_v_one_over_n import VGeneratorOneOverN
 from src.utils.cj_theo_sol import CJTheoSol
@@ -70,6 +65,6 @@ def main_one_over_n(params: dict = {}) -> None:
     return summary
 
 if __name__ == "__main__":
-    # simple test of functions 
+    # Test functions 
     params = DEFAULT_PARAMS_CONSTANT
     res = main_one_over_n(params)

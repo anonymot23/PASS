@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 
@@ -39,8 +34,8 @@ class VGeneratorConstant(object):
         self.pctg_min = pctg_min
         self.print_metrics = print_metrics
         
-        # constant mean estimation
-        self.constAgent = ConstantAgent(self.s_0, self.x_0, self.q_0,
+        # agent
+        self.agent = ConstantAgent(self.s_0, self.x_0, self.q_0,
                                        self.nb_iter, self.time_step, 
                                        self.size_q, self.q_max, self.mu,
                                        self.alpha, self.var, self.kappa,
@@ -50,8 +45,8 @@ class VGeneratorConstant(object):
     def initialize_parameters(self):
         # initialize primary parameters
         self.v_0 = np.ones((self.nb_iter + 1, self.size_q))
-        q_values = np.arange(self.constAgent.q_min, self.constAgent.q_max,
-                             self.constAgent.step_q)
+        q_values = np.arange(self.agent.q_min, self.agent.q_max,
+                             self.agent.step_q)
         self.v_0[-1,:] = - self.A * q_values * q_values
         self.v_0_past = np.zeros((self.nb_iter + 1, self.size_q))
         
@@ -76,9 +71,9 @@ class VGeneratorConstant(object):
         # loop over episodes
         for ep in range(self.nb_episode):
             # Update mean, error
-            self.v_0, self.v_0_past = self.constAgent.update(self.v_0, self.v_0_past,
+            self.v_0, self.v_0_past = self.agent.update(self.v_0, self.v_0_past,
                                                             gamma= self.gamma)
-            error_val = self.constAgent.getLoss(self.v_0, v_theo)
+            error_val = self.agent.getLoss(self.v_0, v_theo)
 
             # update tracking variables
             self.update_tracking_parameters(ep, error_val)

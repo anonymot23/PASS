@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 18 18:36:51 2023
-
-@author: othma
-"""
 
 from src.optimal_execution.CONSTANT.generate_v_constant import VGeneratorConstant
 from src.utils.cj_theo_sol import CJTheoSol
@@ -70,6 +65,18 @@ def main_constant(params: dict = {}) -> None:
     return summary
 
 if __name__ == "__main__":
-    # simple test of functions 
+    # Test functions 
     params = DEFAULT_PARAMS_CONSTANT
     res = main_constant(params)
+    
+    # import numpy as np
+    # import matplotlib.pyplot as plt
+    
+    # error = np.concatenate(res['error_hist']).mean(axis=0)
+    # index = np.arange(1, len(error)+1)
+    
+    # maxidx = 10000
+    # plt.plot(index[:maxidx], error[:maxidx], label='constant')
+    # plt.grid()
+    # plt.legend()
+    # plt.show()

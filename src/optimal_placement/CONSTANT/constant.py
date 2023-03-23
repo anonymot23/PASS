@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 import pandas as pd
@@ -216,7 +211,7 @@ class ConstantAgent(object):
         return new_state
         
     def getLoss(self, v, v_theo):
-        return np.linalg.norm(v - v_theo)
+        return np.linalg.norm(np.nan_to_num(v) - np.nan_to_num(v_theo))
 
     def print_summary(self, i, idx_event):
         if self.write_history:

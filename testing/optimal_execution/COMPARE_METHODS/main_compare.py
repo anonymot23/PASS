@@ -3,22 +3,22 @@
 from os.path import join
 import numpy as np
 
-from testing.mean_estimate.CONSTANT.main_constant import main_constant
-from testing.mean_estimate.ONEOVERN.main_one_over_n import main_one_over_n
-from testing.mean_estimate.SAGA.main_saga import main_saga
-from testing.mean_estimate.PASS.main_pass import main_pass
-from src.mean_estimate.parameters import DEFAULT_PARAMS_CONSTANT_MEAN, \
-    DEFAULT_PARAMS_SAGA_MEAN, DEFAULT_PARAMS_PASS_MEAN, IMAGES_FOLDER
+from testing.optimal_execution.CONSTANT.main_constant import main_constant
+from testing.optimal_execution.ONEOVERN.main_one_over_n import main_one_over_n
+from testing.optimal_execution.SAGA.main_saga import main_saga
+from testing.optimal_execution.PASS.main_pass import main_pass
+from src.optimal_execution.parameters import DEFAULT_PARAMS_CONSTANT, \
+    DEFAULT_PARAMS_SAGA, DEFAULT_PARAMS_PASS, IMAGES_FOLDER
 
 import matplotlib.pyplot as plt
 
 def main_compare(params: dict = {}) -> None:
     # Initialization parameters
     if not(params):
-        params = {'cste': DEFAULT_PARAMS_CONSTANT_MEAN,
-                  'one_over_n': DEFAULT_PARAMS_CONSTANT_MEAN,
-                  'saga': DEFAULT_PARAMS_SAGA_MEAN,
-                  'pass': DEFAULT_PARAMS_PASS_MEAN
+        params = {'constant': DEFAULT_PARAMS_CONSTANT,
+                  'one_over_n': DEFAULT_PARAMS_CONSTANT,
+                  'saga': DEFAULT_PARAMS_SAGA,
+                  'pass': DEFAULT_PARAMS_PASS
                   }
     
     summary = dict()
@@ -35,10 +35,10 @@ def main_compare(params: dict = {}) -> None:
 
 if __name__ == "__main__":
     # Test functions 
-    params = {'constant': DEFAULT_PARAMS_CONSTANT_MEAN,
-              'one_over_n': DEFAULT_PARAMS_CONSTANT_MEAN,
-              'saga': DEFAULT_PARAMS_SAGA_MEAN,
-              'pass': DEFAULT_PARAMS_PASS_MEAN
+    params = {'constant': DEFAULT_PARAMS_CONSTANT,
+              'one_over_n': DEFAULT_PARAMS_CONSTANT,
+              'saga': DEFAULT_PARAMS_SAGA,
+              'pass': DEFAULT_PARAMS_PASS
               }
     res = main_compare(params)
     
@@ -56,6 +56,6 @@ if __name__ == "__main__":
     plt.plot(index[:maxidx], error4[:maxidx], label='pass')
     plt.grid()
     plt.legend()
-    plt.savefig(join(IMAGES_FOLDER, "mean_estimate_comparison.png"),
+    plt.savefig(join(IMAGES_FOLDER, "optimal_execution_comparison.png"),
                 bbox_inches='tight')
     plt.show()

@@ -1,24 +1,17 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 18 18:36:51 2023
-
-@author: othma
-"""
 
 from os.path import join
 import pandas as pd
 from src.optimal_placement.ONEOVERN.generate_v_one_over_n import VGeneratorOneOverN
 from src.utils.optimal_placement_num_sol import NumSol
-from src.optimal_placement.parameters import DEFAULT_PARAMS_CONSTANT
+from src.optimal_placement.parameters import DEFAULT_PARAMS_CONSTANT, DATA_FOLDER, INTENSITY_FILENAME
  
-def main_constant(params: dict = {}) -> None:
+def main_one_over_n(params: dict = {}) -> None:
     # Initialization parameters
     if not(params):
         params = DEFAULT_PARAMS_CONSTANT
     
-    path = "..\..\..\data"
-    filename = "Intens_val_qr.csv"
-    Intens_val = pd.read_csv(join(path,filename), index_col = 0)
+    Intens_val = pd.read_csv(join(DATA_FOLDER, INTENSITY_FILENAME), index_col = 0)
     Intens_val_bis = Intens_val[Intens_val['Spread'] == 1].groupby(['BB size']).agg({'Limit':'mean', 'Cancel': 'mean', 'Market': 'mean'}).loc[:10,:]
     Intens_val_bis.reset_index(inplace = True)
     Intens_val_bis.loc[0,['Cancel','Market']] = 0
@@ -92,6 +85,6 @@ def main_constant(params: dict = {}) -> None:
     return summary
 
 if __name__ == "__main__":
-    # simple test of functions 
+    # Test functions 
     params = DEFAULT_PARAMS_CONSTANT
-    res = main_constant(params)
+    res = main_one_over_n(params)

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 18 18:36:51 2023
-
-@author: othma
-"""
 
 from src.optimal_execution.SAGA.generate_v_saga import VGeneratorSaga
 from src.utils.cj_theo_sol import CJTheoSol
@@ -72,6 +67,6 @@ def main_saga(params: dict = {}) -> None:
     return summary
 
 if __name__ == "__main__":
-    # simple test of functions 
+    # Test functions 
     params = DEFAULT_PARAMS_SAGA
     res = main_saga(params)

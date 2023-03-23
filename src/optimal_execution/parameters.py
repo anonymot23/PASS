@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Mar 19 04:30:51 2023
 
-@author: othma
-"""
+IMAGES_FOLDER = "..\..\..\outputs\images"
+
 
 DEFAULT_PARAMS_CONSTANT = { "s_0": 5,
                             "x_0": 0,
