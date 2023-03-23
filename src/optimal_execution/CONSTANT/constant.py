@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pdb
 import numpy as np 
 
 class AgentState(object):
@@ -46,25 +47,34 @@ class ConstantAgent(object):
         
     def update(self, v_0, v_0_past, gamma= 0.2):
         # Initialize state variable
+        v_0_cum = np.zeros((self.nb_iter + 1, self.size_q))
         self.initialize_variables()
         # Initialize random values
         z = np.random.normal(loc=0.0, scale=1.0, size=self.nb_iter)
         rnd_values = np.sqrt(self.time_step * self.var) * z
+        # print( self.state.s,  self.state.x,  self.state.q,  self.state.idx_q)
+        # pdb.set_trace()
         
         # Forward loop
         for i in range(self.nb_iter):
             # get next state
             self.next_state = self.getNextState(rnd_values[i], v_0_past[i+1,:])
+            # print( self.next_state.s,  self.next_state.x,  self.next_state.q,  self.next_state.idx_q)
+            # pdb.set_trace()
 
             # find optimal adjustment
             delta = self.find_optimal_adjust(i, v_0)
+            v_0_cum[i, self.state.idx_q] += delta
+            # pdb.set_trace()
             
             # update v_0
-            v_0[i, self.state.idx_q] = v_0[i, self.state.idx_q] + gamma * delta
-            v_0_past[i, self.state.idx_q] = delta         
+            v_0[i, self.state.idx_q] = v_0[i, self.state.idx_q] + gamma * v_0_cum[i, self.state.idx_q]# delta
+            v_0_past[i, self.state.idx_q] = v_0_cum[i, self.state.idx_q] # delta    
+            # pdb.set_trace()
 
             # Update current state values  
             self.state = self.next_state
+            # self.next_state.nu
                    
         return v_0, v_0_past
     
@@ -105,6 +115,7 @@ class ConstantAgent(object):
                 + (q_next_values*self.next_state.s - self.state.q*self.state.s) \
                 - self.phi * self.state.q * self.state.q * self.time_step \
                 + v_0[i+1, iq_next_values] - v_0[i, self.state.idx_q]
+        # pdb.set_trace()
         
         return vect_values.max() 
         

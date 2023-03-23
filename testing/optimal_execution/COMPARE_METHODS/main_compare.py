@@ -49,7 +49,7 @@ if __name__ == "__main__":
     error4 = np.concatenate(res['pass']['error_hist']).mean(axis=0)
     index = np.arange(1, len(error1)+1)
     
-    maxidx = 300
+    maxidx = 5000
     plt.plot(index[:maxidx], error1[:maxidx], label='one_over_n')
     plt.plot(index[:maxidx], error2[:maxidx], label='constant')
     plt.plot(index[:maxidx], error3[:maxidx], label='saga')

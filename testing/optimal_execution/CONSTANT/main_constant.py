@@ -68,15 +68,3 @@ if __name__ == "__main__":
     # Test functions 
     params = DEFAULT_PARAMS_CONSTANT
     res = main_constant(params)
-    
-    # import numpy as np
-    # import matplotlib.pyplot as plt
-    
-    # error = np.concatenate(res['error_hist']).mean(axis=0)
-    # index = np.arange(1, len(error)+1)
-    
-    # maxidx = 10000
-    # plt.plot(index[:maxidx], error[:maxidx], label='constant')
-    # plt.grid()
-    # plt.legend()
-    # plt.show()
