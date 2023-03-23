@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 
 from src.mean_estimate.PASS.pass_ import PassMean
-
 
 class MeanGeneratorPass(object):
     

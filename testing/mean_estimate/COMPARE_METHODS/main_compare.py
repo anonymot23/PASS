@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 18 18:36:51 2023
 
-@author: othma
-"""
-
+from os.path import join
 import numpy as np
 
-from mean_estimate.CONSTANT.main_constant import main_constant
-from mean_estimate.ONEOVERN.main_one_over_n import main_one_over_n
-from mean_estimate.SAGA.main_saga import main_saga
-from mean_estimate.PASS.main_pass import main_pass
+from testing.mean_estimate.CONSTANT.main_constant import main_constant
+from testing.mean_estimate.ONEOVERN.main_one_over_n import main_one_over_n
+from testing.mean_estimate.SAGA.main_saga import main_saga
+from testing.mean_estimate.PASS.main_pass import main_pass
 from src.mean_estimate.parameters import DEFAULT_PARAMS_CONSTANT_MEAN, \
-    DEFAULT_PARAMS_SAGA_MEAN, DEFAULT_PARAMS_PASS_MEAN
+    DEFAULT_PARAMS_SAGA_MEAN, DEFAULT_PARAMS_PASS_MEAN, IMAGES_FOLDER
 
 import matplotlib.pyplot as plt
 
@@ -23,7 +19,7 @@ def main_compare(params: dict = {}) -> None:
                   'one_over_n': DEFAULT_PARAMS_CONSTANT_MEAN,
                   'saga': DEFAULT_PARAMS_SAGA_MEAN,
                   'pass': DEFAULT_PARAMS_PASS_MEAN
-                 }
+                  }
     
     summary = dict()
     if 'constant' in params:
@@ -38,12 +34,12 @@ def main_compare(params: dict = {}) -> None:
     return summary
 
 if __name__ == "__main__":
-    # simple test of functions 
+    # Test functions 
     params = {'constant': DEFAULT_PARAMS_CONSTANT_MEAN,
               'one_over_n': DEFAULT_PARAMS_CONSTANT_MEAN,
               'saga': DEFAULT_PARAMS_SAGA_MEAN,
               'pass': DEFAULT_PARAMS_PASS_MEAN
-             }
+              }
     res = main_compare(params)
     
     # plot values
@@ -53,10 +49,13 @@ if __name__ == "__main__":
     error4 = np.concatenate(res['pass']['error_hist']).mean(axis=0)
     index = np.arange(1, len(error1)+1)
     
-    plt.plot(index, error1, label='one_over_n')
-    plt.plot(index, error2, label='constant')
-    plt.plot(index, error3, label='saga')
-    plt.plot(index, error4, label='pass')
+    maxidx = 300
+    plt.plot(index[:maxidx], error1[:maxidx], label='one_over_n')
+    plt.plot(index[:maxidx], error2[:maxidx], label='constant')
+    plt.plot(index[:maxidx], error3[:maxidx], label='saga')
+    plt.plot(index[:maxidx], error4[:maxidx], label='pass')
     plt.grid()
     plt.legend()
+    plt.savefig(join(IMAGES_FOLDER, "mean_estimate_comparison.png"),
+                bbox_inches='tight')
     plt.show()

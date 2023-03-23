@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 
@@ -50,7 +45,6 @@ class SagaMean(object):
                 h_0[i] = h_0[i] + gamma * (delta - h_0_past[i,r]  + avg_val)
                 h_0_past[i,r] = delta 
                 
-            h_0_past[i] = delta
             nb_past[i] += 1 
             s_val = s_val_next
             

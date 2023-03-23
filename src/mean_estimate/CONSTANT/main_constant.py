@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 18 18:36:51 2023
-
-@author: othma
-"""
 
 import numpy as np
 
@@ -58,6 +53,6 @@ def main_constant(params: dict = {}) -> None:
     return summary
 
 if __name__ == "__main__":
-    # simple test of functions 
+    # Test functions 
     params = DEFAULT_PARAMS_CONSTANT_MEAN
     res = main_constant(params)

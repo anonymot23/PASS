@@ -1,19 +1,14 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 18 18:36:51 2023
-
-@author: othma
-"""
 
 import numpy as np
 
-from src.mean_estimate.SAGA.generate_mean_saga import MeanGeneratorSaga
-from src.mean_estimate.parameters import DEFAULT_PARAMS_SAGA_MEAN
+from src.mean_estimate.CONSTANT.generate_mean_constant import MeanGeneratorConstant
+from src.mean_estimate.parameters import DEFAULT_PARAMS_CONSTANT_MEAN
  
-def main_saga(params: dict = {}) -> None:
+def main_constant(params: dict = {}) -> None:
     # Initialization parameters
     if not(params):
-        params = DEFAULT_PARAMS_SAGA_MEAN
+        params = DEFAULT_PARAMS_CONSTANT_MEAN
     
     s_val = params["s_val"]
     nbSimu = params["nbSimu"]
@@ -23,8 +18,6 @@ def main_saga(params: dict = {}) -> None:
     time_step = params["time_step"] 
     mu = params["mu"]
     alpha = params["alpha"]
-    n_max = params["n_max"]
-    prob_exp = params["prob_exp"]
     var = params["var"]
     gamma = params["gamma"]
     pctg_min = params["pctg_min"]
@@ -42,9 +35,9 @@ def main_saga(params: dict = {}) -> None:
     # main routine
     for n in range(nbSimu):
         # generate forecast
-        meanGen = MeanGeneratorSaga(s_val, nb_iter, nb_episode, window_size,
-                                    time_step, mu, alpha, var, n_max, prob_exp,
-                                    gamma, print_metrics, pctg_min)
+        meanGen = MeanGeneratorConstant(s_val, nb_iter, nb_episode, window_size,
+                                            time_step, mu, alpha, var, gamma, 
+                                            print_metrics, pctg_min)
         meanGen.get_mean(h_theo)
         h_0 = meanGen.h_0
         avg_error = meanGen.avg_error[:,1].reshape((1,-1))
@@ -62,6 +55,6 @@ def main_saga(params: dict = {}) -> None:
     return summary
 
 if __name__ == "__main__":
-    # simple test of functions 
-    params = DEFAULT_PARAMS_SAGA_MEAN
-    res = main_saga(params)
+    # Test functions 
+    params = DEFAULT_PARAMS_CONSTANT_MEAN
+    res = main_constant(params)

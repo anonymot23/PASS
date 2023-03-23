@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 15 16:51:37 2019
-
-@author: othmane.mounjid
-"""
 
 import numpy as np 
 
@@ -39,7 +34,6 @@ class MeanGeneratorSaga(object):
         self.sagaMean = SagaMean(self.s_val, self.nb_iter, self.time_step, 
                                  self.mu, self.alpha, self.var, self.n_max,
                                  self.prob_exp)
-        
         
     def initialize_parameters(self):
         # initialize primary parameters
@@ -138,9 +132,10 @@ if __name__ == "__main__":
     pctg_min = 0.1
     h_theo = alpha * mu * time_step * np.ones(nb_iter) 
                  
-    # Generate forecast
+    # Generate estimate
     meanGen = MeanGeneratorSaga(s_val, nb_iter, nb_episode, window_size,
-                                time_step, mu, alpha, var, n_max, prob_exp,
-                                gamma, print_metrics, pctg_min)
+                                time_step, mu, alpha, var, gamma,
+                                n_max, prob_exp, print_metrics,
+                                pctg_min)
     meanGen.get_mean(h_theo)
     
