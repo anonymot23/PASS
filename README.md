@@ -47,7 +47,7 @@ algorithms.
 <br />
 <div align="center">
   <a href="https://github.com/anonymot23/PASS/blob/main/README.md">
-    <img src="outputs/images/improvement_drift_estimation-1.png">
+    <img src="outputs/images/improvement_drift_estimation-1.png" width="500" height="400">
   </a>
 </div>
 
@@ -58,7 +58,7 @@ The figure below displays the fluctuation of the error as a function of the numb
 <br />
 <div align="center">
   <a href="https://github.com/anonymot23/PASS/blob/main/README.md">
-    <img src="outputs/images/improvement_optimal_placement-1.png" >
+    <img src="outputs/images/improvement_optimal_placement-1.png" width="500" height="400">
   </a>
 </div>
 
