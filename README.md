@@ -77,6 +77,6 @@ Figure below also shows how well the PASS algorithm approximates the theoretical
 <br />
 <div align="center">
   <a href="https://github.com/anonymot23/PASS/blob/main/README.md">
-    <img src="outputs/images/Merged_optimal_execution_plots">
+    <img src="outputs/images/Merged_optimal_execution_plots.png">
   </a>
 </div>
