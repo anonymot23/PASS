@@ -68,7 +68,7 @@ The figure below highlights the error variations when the number of iterations i
 <br />
 <div align="center">
   <a href="https://github.com/anonymot23/PASS/blob/main/README.md">
-    <img src="outputs/images/improvement_optimal_execution-1.png" width="2000" height="1500">
+    <img src="outputs/images/improvement_optimal_execution-1.png" width="500" height="400">
   </a>
 </div>
 
