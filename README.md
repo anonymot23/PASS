@@ -47,7 +47,7 @@ algorithms.
 <br />
 <div align="center">
   <a href="https://github.com/anonymot23/PASS/blob/main/README.md">
-    <img src="outputs/images/improvement_optimal_placement-1.png" alt="Logo" width="80" height="80">
+    <img src="outputs/images/improvement_optimal_placement-1.png">
   </a>
 </div>
 
