@@ -72,7 +72,7 @@ The figure below highlights the error variations when the number of iterations i
   </a>
 </div>
 
-Figure below also shows how well the PASS algorithm approximates the theoretical solution compared to the constant learning rate strategy.
+Figure below also shows how well the PASS algorithm (rightmost picture) approximates the theoretical solution compared to the constant learning rate strategy (middle picture).
 
 <br />
 <div align="center">
